@@ -70,6 +70,33 @@ def restet_pressed():
     sim_button.config(state=tk.NORMAL)
     run_button.config(state=tk.DISABLED)
 
+# forest grid funcs
+
+def create_grid(parent, rows, cols):
+    global grid_entries
+    grid_entries = []
+    for i in range(rows):
+        row_entries = []
+        for j in range(cols):
+            entry = tk.Entry(parent, width=2, justify='center')
+            entry.grid(row=i, column=j, padx=2, pady=2)
+            row_entries.append(entry)
+        grid_entries.append(row_entries)
+
+def read_element(row, col):
+    try:
+        return grid_entries[row][col].get()
+    except IndexError:
+        print(f"Invalid indices: ({row}, {col})")
+        return None
+
+def set_element(row, col, value):
+    try:
+        grid_entries[row][col].delete(0, tk.END)
+        grid_entries[row][col].insert(0, value)
+    except IndexError:
+        print(f"Invalid indices: ({row}, {col})")
+
 root = tk.Tk()
 root.title("Forest Fire")
 
@@ -115,12 +142,37 @@ entry4.grid(row=3, column=1, padx=10, pady=0)
 sim_button = tk.Button(root, text="Confirm Sim Params", command=confirm_sim_params)
 sim_button.grid(row=2, column=3, rowspan=2, pady=0)
 
+# forest grid
+
+canvas = tk.Canvas(root)
+canvas.grid(row=4, column=0, sticky='nsew')
+
+scroll_x = tk.Scrollbar(root, orient='horizontal', command=canvas.xview)
+scroll_x.grid(row=5, column=0, sticky='ew')
+
+scroll_y = tk.Scrollbar(root, orient='vertical', command=canvas.yview)
+scroll_y.grid(row=4, column=1, sticky='ns')
+
+canvas.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+
+frame = tk.Frame(canvas) # Create a frame inside the canvas to hold the grid
+canvas.create_window((0, 0), window=frame, anchor='nw')
+
+n = 10  # Number of rows
+m = 10  # Number of columns
+
+grid_entries = [] # Create the grid of text fields
+create_grid(frame, n, m)
+
+frame.update_idletasks() # Update the scroll region to match the content
+canvas.config(scrollregion=canvas.bbox("all"))
+
 # run
 
 reset_button = tk.Button(root, text="Button 3", command=restet_pressed)
-reset_button.grid(row=4, column=0, columnspan=1, pady=20)
+reset_button.grid(row=6, column=0, columnspan=1, pady=20)
 
 run_button = tk.Button(root, text="Button 3", command=run_pressed, state=tk.DISABLED)
-run_button.grid(row=4, column=1, columnspan=1, pady=20)
+run_button.grid(row=6, column=1, columnspan=1, pady=20)
 
 root.mainloop()
