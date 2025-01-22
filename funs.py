@@ -11,10 +11,12 @@ def confirm_grid_size():
     grid_button.config(state=tk.DISABLED)
     check_buttons()
 
+
 def validate_input1(action, value_if_allowed):
     if action == '1':  # '1' indicates an insert action
         return value_if_allowed.isdigit()
     return True
+
 
 def confirm_sim_params():
     density = entry3.get()
@@ -25,11 +27,12 @@ def confirm_sim_params():
     print(f'Wind: ({wind[0]}, {wind[1]})')
     global sim_params
     sim_params = {'density': float(density), 'probability': float(probability), 'wind': tuple(map(float, wind))}
-    
+
     global sim_flag
     sim_flag = True
     sim_button.config(state=tk.DISABLED)
     check_buttons()
+
 
 def validate_input2(action, value_if_allowed):
     if action == '1':  # '1' indicates an insert action
@@ -40,14 +43,17 @@ def validate_input2(action, value_if_allowed):
             return False
     return True
 
+
 def check_buttons():
     print(grid_flag, sim_flag)
     if grid_flag and sim_flag:
         run_button.config(state=tk.NORMAL)
 
+
 def run_pressed():
     run_button.config(state=tk.DISABLED)
     print('sim run')
+
 
 def restet_pressed():
     global grid_flag
