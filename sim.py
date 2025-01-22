@@ -14,10 +14,12 @@ init = np.zeros((10,10))
 
 fire_tree_pos = {}
 tree_pos = {}
+to_burn = {}
 
+iteration = 0
 matplotlib.use('TkAgg')
 
-colors = ['green', '#654321', '#FF4500']
+colors = ['green', '#654321', '#FF4500', 'black']
 # colors = ['gray', 'blue', 'red']
 cmap = ListedColormap(colors)
 
@@ -29,13 +31,14 @@ myPlot = None
 # 0 - empty
 # 1 - tree
 # 2 - fire tree
+# 3 - burned tree
 def generate_trees(size, probabilities):
-    return np.random.choice(np.arange(0, 3), p=probabilities, size=size)
+    return np.random.choice(np.arange(0, 4), p=probabilities, size=size)
 
 
-def calculate_fire_spread_probability(grid, prob):
+def calculate_fire_spread_probability(grid, prob, burn_time):
     get_tree_pos_info(grid)
-
+    global iteration
     for cell_pos in tree_pos:
         row = cell_pos[0]
         col = cell_pos[1]
@@ -50,14 +53,20 @@ def calculate_fire_spread_probability(grid, prob):
 
                 if np.random.random() >= prob:
                     grid[cell_pos] = 2
+                    to_burn[cell_pos] = iteration
                     i = 1
                     break
+    for item in to_burn:
+        if iteration - to_burn[item] >= burn_time:
+            grid[item] = 3
+    iteration += 1
     return grid
 
 
 def get_tree_pos_info(grid):
     global fire_tree_pos
     global tree_pos
+    global to_burn
 
     tree_pos = {}
     fire_tree_pos = {}
@@ -67,6 +76,7 @@ def get_tree_pos_info(grid):
             cell = grid[row, col]
             if cell == 2:
                 fire_tree_pos[(row, col)] = cell
+                to_burn[(row, col)] = iteration
             elif cell == 1:
                 tree_pos[(row, col)] = cell
 
