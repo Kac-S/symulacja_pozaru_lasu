@@ -9,7 +9,8 @@ grid_size = (10, 10)
 arr = np.zeros(grid_size)
 probToSetOnFire = 0.5
 
-init = np.random.rand(10, 10)
+#init = np.random.rand(10, 10)
+init = np.zeros((10,10))
 
 fire_tree_pos = {}
 tree_pos = {}
@@ -20,10 +21,10 @@ colors = ['green', '#654321', '#FF4500']
 # colors = ['gray', 'blue', 'red']
 cmap = ListedColormap(colors)
 
-fig, ax = plt.subplots()
-myPlot = ax.imshow(init, cmap=cmap, vmin=0, vmax=2)
-plt.axis('off')
-
+# fig = matplotlib.figure.Figure()
+# myPlot = fig.imshow(init, cmap=cmap, vmin=0, vmax=2)
+# plt.axis('off')
+myPlot = None
 
 # 0 - empty
 # 1 - tree
@@ -70,23 +71,30 @@ def get_tree_pos_info(grid):
                 tree_pos[(row, col)] = cell
 
 
-def update_plot(new_grid):
+def update_plot(new_grid, canvas):
     myPlot.set_data(new_grid)
-    plt.draw()
-    plt.pause(1)
+    # plt.draw()
+    # plt.pause(1)
+    canvas.draw()
 
 
-def start_simulation(grid):
-    while 1:
-        grid = calculate_fire_spread_probability(grid, 0)
-        update_plot(grid)
+def start_simulation(grid_size, probs):
+    
+    grid = generate_trees(grid_size, [1 - probs['density'] - probs['probability'], probs['density'], probs['probability']])
+    return grid
 
 
 def show_grid(grid):
     print(grid)
 
 
-trees = generate_trees(grid_size, [0.5, 0.4, 0.10])
-print(trees)
+def set_plot(getplot):
+    global myPlot
+    myPlot = getplot 
+    plt.axis('off')
+    # return fig
+
+
+# print(trees)
 # plot_grid(trees)
-start_simulation(trees)
+# start_simulation(trees)
