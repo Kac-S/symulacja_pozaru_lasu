@@ -102,85 +102,86 @@ def set_element(row, col, value):
 root = tk.Tk()
 root.title("Forest Fire")
 
-# Grid size
-r = 0
 
+# Frames up
+frame_up = tk.Frame(root)
+frame_up.pack(pady=10)
+
+frame_up_L = tk.Frame(frame_up)
+frame_up_C = tk.Frame(frame_up)
+frame_up_R = tk.Frame(frame_up)
+frame_up_L.pack(side='left')
+frame_up_C.pack(side='left')
+frame_up_R.pack(side='left')
+
+# XY input
 vcmd = root.register(validate_input1)
 
-label1 = tk.Label(root, text="X:")
-label1.grid(row=r, column=0, padx=10, pady=0)
-
-entry1 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
+label1 = tk.Label(frame_up_L, text="X:")
+label1.pack()
+entry1 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry1.insert(0, '0')
-entry1.grid(row=r, column=1, padx=10, pady=0)
+entry1.pack()
 
-
-grid_button = tk.Button(root, text="Confirm Grid Size", command=confirm_grid_size)
-grid_button.grid(row=r, column=3, rowspan=2, pady=0)
-r += 1
-
-
-label2 = tk.Label(root, text="Y:")
-label2.grid(row=r, column=0, padx=10, pady=0)
-
-entry2 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
+label2 = tk.Label(frame_up_L, text="Y:")
+label2.pack()
+entry2 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry2.insert(0, '0')
-entry2.grid(row=r, column=1, padx=10, pady=0)
-r += 1
-# Sim params
+entry2.pack()
 
+grid_button = tk.Button(frame_up_R, text="Confirm Grid Size", command=confirm_grid_size)
+grid_button.pack()
+
+# forest density
+ 
 vcmd = root.register(validate_input2)
 
-    # forest density
-label3 = tk.Label(root, text="Density:")
-label3.grid(row=r, column=0, padx=10, pady=0)
-
-entry3 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
+label3 = tk.Label(frame_up_L, text="Density:")
+label3.pack()
+entry3 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry3.insert(0, '0')
-entry3.grid(row=r, column=1, padx=10, pady=0)
+entry3.pack()
 
-sim_button = tk.Button(root, text="Confirm Sim Params", command=confirm_sim_params)
-sim_button.grid(row=r, column=3, rowspan=2, pady=0)
-r += 1
-
-    # fire spread probability
-label4 = tk.Label(root, text="Probability:")
-label4.grid(row=r, column=0, padx=10, pady=0)
-
-entry4 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
+label4 = tk.Label(frame_up_L, text="Probability:")
+label4.pack()
+entry4 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry4.insert(0, '0')
-entry4.grid(row=r, column=1, padx=10, pady=0)
-r += 1
+entry4.pack()
 
-    # wind
-label5 = tk.Label(root, text="Wind (x,y)")
-label5.grid(row=r, column=0, padx=10, pady=0)
-
-entry5x = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
+label5 = tk.Label(frame_up_L, text="Wind (x,y)")
+label5.pack()
+frame_up_C_wind = tk.Frame(frame_up_C)
+frame_up_C_wind.pack()
+entry5x = tk.Entry(frame_up_C_wind, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
 entry5x.insert(0, '0')
-entry5x.grid(row=r, column=1, padx=10, pady=0)
+entry5x.pack(side='left')
+entry5y = tk.Entry(frame_up_C_wind, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
+entry5y.insert(0, '0')
+entry5y.pack(side='left')
 
-entry5x = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
-entry5x.insert(0, '0')
-entry5x.grid(row=r, column=10, padx=10, pady=0)
-r += 1
+sim_button = tk.Button(frame_up_R, text="Confirm Sim Params", command=confirm_sim_params)
+sim_button.pack()
 
 # forest grid - matplotlib
+frame_plot = tk.Frame(root)
+frame_plot.pack(pady=10)
 
 fig = Figure(figsize = (5, 5), dpi = 100) 
 
-canvas = FigureCanvasTkAgg(fig, master = root)   
+canvas = FigureCanvasTkAgg(fig, master = frame_plot)   
 canvas.draw()
 # placing the canvas on the Tkinter window 
-canvas.get_tk_widget().grid(row=r, column=0, columnspan=4)
-r += 1
+canvas.get_tk_widget().pack()
 
 # run
 
-reset_button = tk.Button(root, text="Reset", command=restet_pressed)
-reset_button.grid(row=6, column=0, columnspan=1, pady=20)
+frame_bottom = tk.Frame(root)
+frame_bottom.pack()
 
-run_button = tk.Button(root, text="Start", command=run_pressed, state=tk.DISABLED)
-run_button.grid(row=6, column=1, columnspan=1, pady=20)
+reset_button = tk.Button(frame_bottom, text="Reset", command=restet_pressed)
+reset_button.pack(side='left')
+
+run_button = tk.Button(frame_bottom, text="Start", command=run_pressed, state=tk.DISABLED)
+run_button.pack(side='left')
 
 root.mainloop()
