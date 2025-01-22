@@ -1,4 +1,6 @@
 import tkinter as tk
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk) 
+from matplotlib.figure import Figure
 
 grid_flag = False
 sim_flag = False
@@ -100,79 +102,85 @@ def set_element(row, col, value):
 root = tk.Tk()
 root.title("Forest Fire")
 
-# Grid
+# Grid size
+r = 0
 
 vcmd = root.register(validate_input1)
 
 label1 = tk.Label(root, text="X:")
-label1.grid(row=0, column=0, padx=10, pady=0)
+label1.grid(row=r, column=0, padx=10, pady=0)
 
 entry1 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry1.insert(0, '0')
-entry1.grid(row=0, column=1, padx=10, pady=0)
+entry1.grid(row=r, column=1, padx=10, pady=0)
+
+
+grid_button = tk.Button(root, text="Confirm Grid Size", command=confirm_grid_size)
+grid_button.grid(row=r, column=3, rowspan=2, pady=0)
+r += 1
+
 
 label2 = tk.Label(root, text="Y:")
-label2.grid(row=1, column=0, padx=10, pady=0)
+label2.grid(row=r, column=0, padx=10, pady=0)
 
 entry2 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry2.insert(0, '0')
-entry2.grid(row=1, column=1, padx=10, pady=0)
-
-grid_button = tk.Button(root, text="Confirm Grid Size", command=confirm_grid_size)
-grid_button.grid(row=0, column=3, rowspan=2, pady=0)
-
+entry2.grid(row=r, column=1, padx=10, pady=0)
+r += 1
 # Sim params
 
 vcmd = root.register(validate_input2)
 
+    # forest density
 label3 = tk.Label(root, text="Density:")
-label3.grid(row=2, column=0, padx=10, pady=0)
+label3.grid(row=r, column=0, padx=10, pady=0)
 
 entry3 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry3.insert(0, '0')
-entry3.grid(row=2, column=1, padx=10, pady=0)
+entry3.grid(row=r, column=1, padx=10, pady=0)
 
+sim_button = tk.Button(root, text="Confirm Sim Params", command=confirm_sim_params)
+sim_button.grid(row=r, column=3, rowspan=2, pady=0)
+r += 1
+
+    # fire spread probability
 label4 = tk.Label(root, text="Probability:")
-label4.grid(row=3, column=0, padx=10, pady=0)
+label4.grid(row=r, column=0, padx=10, pady=0)
 
 entry4 = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry4.insert(0, '0')
-entry4.grid(row=3, column=1, padx=10, pady=0)
+entry4.grid(row=r, column=1, padx=10, pady=0)
+r += 1
 
-sim_button = tk.Button(root, text="Confirm Sim Params", command=confirm_sim_params)
-sim_button.grid(row=2, column=3, rowspan=2, pady=0)
+    # wind
+label5 = tk.Label(root, text="Wind (x,y)")
+label5.grid(row=r, column=0, padx=10, pady=0)
 
-# forest grid
+entry5x = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
+entry5x.insert(0, '0')
+entry5x.grid(row=r, column=1, padx=10, pady=0)
 
-canvas = tk.Canvas(root)
-canvas.grid(row=4, column=0, sticky='nsew')
+entry5x = tk.Entry(root, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
+entry5x.insert(0, '0')
+entry5x.grid(row=r, column=10, padx=10, pady=0)
+r += 1
 
-scroll_x = tk.Scrollbar(root, orient='horizontal', command=canvas.xview)
-scroll_x.grid(row=5, column=0, sticky='ew')
+# forest grid - matplotlib
 
-scroll_y = tk.Scrollbar(root, orient='vertical', command=canvas.yview)
-scroll_y.grid(row=4, column=1, sticky='ns')
+fig = Figure(figsize = (5, 5), dpi = 100) 
 
-canvas.configure(xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
-
-frame = tk.Frame(canvas) # Create a frame inside the canvas to hold the grid
-canvas.create_window((0, 0), window=frame, anchor='nw')
-
-n = 10  # Number of rows
-m = 10  # Number of columns
-
-grid_entries = [] # Create the grid of text fields
-create_grid(frame, n, m)
-
-frame.update_idletasks() # Update the scroll region to match the content
-canvas.config(scrollregion=canvas.bbox("all"))
+canvas = FigureCanvasTkAgg(fig, master = root)   
+canvas.draw()
+# placing the canvas on the Tkinter window 
+canvas.get_tk_widget().grid(row=r, column=0, columnspan=4)
+r += 1
 
 # run
 
-reset_button = tk.Button(root, text="Button 3", command=restet_pressed)
+reset_button = tk.Button(root, text="Reset", command=restet_pressed)
 reset_button.grid(row=6, column=0, columnspan=1, pady=20)
 
-run_button = tk.Button(root, text="Button 3", command=run_pressed, state=tk.DISABLED)
+run_button = tk.Button(root, text="Start", command=run_pressed, state=tk.DISABLED)
 run_button.grid(row=6, column=1, columnspan=1, pady=20)
 
 root.mainloop()
