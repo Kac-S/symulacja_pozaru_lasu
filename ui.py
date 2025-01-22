@@ -13,11 +13,11 @@ run_flag  = False
 
 def confirm_grid_size():
     gridx = entry1.get()
-    gridy = entry2.get()
+    # gridy = entry2.get()
     print(f"X: {gridx}")
-    print(f"Y: {gridy}")
+    # print(f"Y: {gridy}")
     global grid_size
-    grid_size = (int(gridx), int(gridy))
+    grid_size = (int(gridx), int(gridx))
 
     global grid_flag
     grid_flag = True
@@ -118,17 +118,17 @@ frame_up_R.pack(side='left')
 # XY input
 vcmd = root.register(validate_input1)
 
-label1 = tk.Label(frame_up_L, text="X:")
+label1 = tk.Label(frame_up_L, text="L:")
 label1.pack()
 entry1 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry1.insert(0, '45')
 entry1.pack()
 
-label2 = tk.Label(frame_up_L, text="Y:")
-label2.pack()
-entry2 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
-entry2.insert(0, '45')
-entry2.pack()
+# label2 = tk.Label(frame_up_L, text="Y:")
+# label2.pack()
+# entry2 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
+# entry2.insert(0, '45')
+# entry2.pack()
 
 grid_button = tk.Button(frame_up_R, text="Confirm Grid Size", command=confirm_grid_size)
 grid_button.pack()
@@ -175,6 +175,7 @@ cmap = ListedColormap(colors)
 
 fig = Figure(figsize = (5, 5), dpi = 100)
 ax = fig.add_subplot(111)
+ax.axis('off')
 im_data = np.random.random((10,10))
 im_plt = ax.imshow(im_data, cmap=cmap, vmin=0, vmax=2)
 
@@ -199,7 +200,7 @@ run_button.pack(side='left')
 tp = time.time()
 while True:
     root.update()
-    print(time.time() - tp)
+    # print(time.time() - tp)
     if run_flag and (time.time() - tp) > 1:
         grid = sim.calculate_fire_spread_probability(grid, 0.95)
         sim.update_plot(grid, canvas)
