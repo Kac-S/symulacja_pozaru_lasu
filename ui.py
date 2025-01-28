@@ -234,7 +234,7 @@ fig = Figure(figsize = (5, 5), dpi = 100)
 ax = fig.add_subplot(111)
 ax.axis('off')
 im_data = np.random.random((10,10))
-im_plt = ax.imshow(im_data, cmap=cmap, vmin=0, vmax=2)
+im_plt = ax.imshow(im_data, cmap=cmap, vmin=0, vmax=3)
 
 sim.set_plot(im_plt)
 
@@ -259,7 +259,7 @@ while True:
     root.update()
     # print(time.time() - tp)
     if run_flag and (time.time() - tp) > 0.4:
-        grid = sim.calculate_fire_spread_probability(grid, 0.95, sim_params['burn'])
+        grid = sim.calculate_fire_spread_probability(grid, 0.95, sim_params['burn'], sim_params['growth'], sim_params['wind'])
         print(grid)
         sim.update_plot(grid, canvas)
         tp = time.time()
