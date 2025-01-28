@@ -119,7 +119,7 @@ def update_plot(new_grid, canvas):
 
 def start_simulation(grid_size, probs):
     grid = generate_trees(grid_size,
-                          [1 - probs['density'] - probs['probability'], probs['density'], probs['probability'], 0])
+                          [1 - probs['density'] - probs['starting'], probs['density'], probs['starting'], 0])
     return grid
 
 

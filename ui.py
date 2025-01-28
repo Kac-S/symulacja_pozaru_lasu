@@ -54,18 +54,16 @@ def confirm_sim_params():
     probability = entry4.get()
     wind = (entry5x.get(), entry5y.get())
     growth_chance = entry6.get()
-    burn_rate = entry7.get()
     print(f"Density: {density}")
     print(f"Probability: {probability}")
     print(f'Wind: ({wind[0]}, {wind[1]})')
     print(f'Growth chance: {growth_chance}')
-    global sim_params
-    sim_params = {
+    global sp
+    sp = {
         'density': float(density),
         'probability': float(probability),
         'wind': tuple(map(float, wind)),
-        'growth': float(growth_chance),
-        'burn': float(burn_rate)
+        'growth': float(growth_chance)
         }
 
     global sim_flag
@@ -90,6 +88,14 @@ def validate_input2(action, value_if_allowed):
             return False
     return True
 
+def validate_input3(action, value_if_allowed):
+    if action == '1':  # '1' indicates an insert action
+        try:
+            value = float(value_if_allowed)
+            return -1.0 <= value <= 1.0
+        except ValueError:
+            return False
+    return True
 
 def check_buttons():
     print(grid_flag, sim_flag)
@@ -99,10 +105,11 @@ def check_buttons():
 
 def run_pressed():
     run_button.config(state=tk.DISABLED)
-    sp = sim_params | numerical
+    global sim_params
+    sim_params = sp | numerical
     print('sim run')
     global grid
-    grid = sim.start_simulation(grid_size, sp)
+    grid = sim.start_simulation(grid_size, sim_params)
     global run_flag
     run_flag = True
 
@@ -170,47 +177,49 @@ grid_button.pack()
 label7 = tk.Label(frame_up_L, text="Burn Rate:")
 label7.pack()
 entry7 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'))
-entry7.insert(0, '4')
+entry7.insert(0, '7')
 entry7.pack()
+
+vcmd = root.register(validate_input2)
 
 label8 = tk.Label(frame_up_L, text="Starting Fires:")
 label8.pack()
-entry8 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'))
-entry8.insert(0, '1')
+entry8 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
+entry8.insert(0, '0.01')
 entry8.pack()
 
 # forest density
- 
-vcmd = root.register(validate_input2)
 
 label3 = tk.Label(frame_up_L, text="Density:")
 label3.pack()
 entry3 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
-entry3.insert(0, '0.4')
+entry3.insert(0, '0.7')
 entry3.pack()
 
 label4 = tk.Label(frame_up_L, text="Spread Probability:")
 label4.pack()
 entry4 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
-entry4.insert(0, '0.1')
+entry4.insert(0, '0.2')
 entry4.pack()
 
 label6 = tk.Label(frame_up_L, text="Growth chance:")
 label6.pack()
 entry6 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
-entry6.insert(0, '0.1')
+entry6.insert(0, '0.05')
 entry6.pack()
+
+vcmdm = root.register(validate_input3)
 
 label5 = tk.Label(frame_up_L, text="Wind (x,y)")
 label5.pack()
 frame_up_C_wind = tk.Frame(frame_up_C)
 frame_up_C_wind.pack()
 entry5x = tk.Entry(frame_up_C_wind, validate="key",
-                    validatecommand=(vcmd, '%d', '%P'), width=10)
+                    validatecommand=(vcmdm, '%d', '%P'), width=10)
 entry5x.insert(0, '0')
 entry5x.pack(side='left')
 entry5y = tk.Entry(frame_up_C_wind, validate="key",
-                    validatecommand=(vcmd, '%d', '%P'), width=10)
+                    validatecommand=(vcmdm, '%d', '%P'), width=10)
 entry5y.insert(0, '0')
 entry5y.pack(side='left')
 
@@ -225,7 +234,7 @@ frame_plot = tk.Frame(root)
 frame_plot.pack(pady=10)
 
 
-colors = ['green', '#654321', '#FF4500', 'black']
+colors = ['#654321', 'green', '#FF4500', 'black']
 # colors = ['gray', 'blue', 'red']
 cmap = ListedColormap(colors)
 
@@ -259,7 +268,7 @@ while True:
     root.update()
     # print(time.time() - tp)
     if run_flag and (time.time() - tp) > 0.4:
-        grid = sim.calculate_fire_spread_probability(grid, 0.95, sim_params['burn'], sim_params['growth'], sim_params['wind'])
+        grid = sim.calculate_fire_spread_probability(grid, 1-sim_params['probability'], sim_params['burn'], sim_params['growth'], sim_params['wind'])
         print(grid)
         sim.update_plot(grid, canvas)
         tp = time.time()
