@@ -205,10 +205,12 @@ label5 = tk.Label(frame_up_L, text="Wind (x,y)")
 label5.pack()
 frame_up_C_wind = tk.Frame(frame_up_C)
 frame_up_C_wind.pack()
-entry5x = tk.Entry(frame_up_C_wind, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
+entry5x = tk.Entry(frame_up_C_wind, validate="key",
+                    validatecommand=(vcmd, '%d', '%P'), width=10)
 entry5x.insert(0, '0')
 entry5x.pack(side='left')
-entry5y = tk.Entry(frame_up_C_wind, validate="key", validatecommand=(vcmd, '%d', '%P'), width=10)
+entry5y = tk.Entry(frame_up_C_wind, validate="key",
+                    validatecommand=(vcmd, '%d', '%P'), width=10)
 entry5y.insert(0, '0')
 entry5y.pack(side='left')
 
