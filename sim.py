@@ -19,9 +19,9 @@ to_burn = {}
 iteration = 0
 matplotlib.use('TkAgg')
 
-colors = ['green', '#654321', '#FF4500', 'black']
+# colors = ['green', '#654321', '#FF4500', 'gray']
 # colors = ['gray', 'blue', 'red']
-cmap = ListedColormap(colors)
+# cmap = ListedColormap(colors)
 
 # fig = matplotlib.figure.Figure()
 # myPlot = fig.imshow(init, cmap=cmap, vmin=0, vmax=2)
@@ -37,7 +37,7 @@ def generate_trees(size, probabilities):
 
 
 def calculate_fire_spread_probability(grid, prob, burn_time):
-    get_tree_pos_info(grid)
+    get_tree_pos_info(grid, burn_time)
     global iteration
     for cell_pos in tree_pos:
         row = cell_pos[0]
@@ -52,18 +52,23 @@ def calculate_fire_spread_probability(grid, prob, burn_time):
                     continue
 
                 if np.random.random() >= prob:
+                    print(cell_pos)
                     grid[cell_pos] = 2
-                    to_burn[cell_pos] = iteration
+                    to_burn[cell_pos] = iteration + burn_time
                     i = 1
                     break
+    
     for item in to_burn:
-        if iteration - to_burn[item] >= burn_time:
+        print(iteration, to_burn[item])
+        if (iteration == to_burn[item]):
+            print(11)
             grid[item] = 3
+            to_burn[item] = -1
     iteration += 1
     return grid
 
 
-def get_tree_pos_info(grid):
+def get_tree_pos_info(grid, burn_time):
     global fire_tree_pos
     global tree_pos
     global to_burn
@@ -76,7 +81,8 @@ def get_tree_pos_info(grid):
             cell = grid[row, col]
             if cell == 2:
                 fire_tree_pos[(row, col)] = cell
-                to_burn[(row, col)] = iteration
+                if (row, col) not in to_burn:
+                    to_burn[(row, col)] = iteration + burn_time
             elif cell == 1:
                 tree_pos[(row, col)] = cell
 
@@ -90,7 +96,7 @@ def update_plot(new_grid, canvas):
 
 def start_simulation(grid_size, probs):
     
-    grid = generate_trees(grid_size, [1 - probs['density'] - probs['probability'], probs['density'], probs['probability']])
+    grid = generate_trees(grid_size, [1 - probs['density'] - probs['probability'], probs['density'], probs['probability'], 0])
     return grid
 
 

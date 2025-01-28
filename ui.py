@@ -14,10 +14,14 @@ run_flag  = False
 def confirm_grid_size():
     gridx = entry1.get()
     # gridy = entry2.get()
-    print(f"X: {gridx}")
+    print(f"LxL: {gridx}x{gridx}")
     # print(f"Y: {gridy}")
     global grid_size
     grid_size = (int(gridx), int(gridx))
+
+    im_data = np.random.random(grid_size)
+    im_plt = ax.imshow(im_data, cmap=cmap, vmin=0, vmax=3)
+    sim.set_plot(im_plt)
 
     global grid_flag
     grid_flag = True
@@ -35,11 +39,21 @@ def confirm_sim_params():
     density = entry3.get()
     probability = entry4.get()
     wind = (entry5x.get(), entry5y.get())
+    growth_chance = entry6.get()
+    burn_rate = entry7.get()
     print(f"Density: {density}")
     print(f"Probability: {probability}")
     print(f'Wind: ({wind[0]}, {wind[1]})')
+    print(f'Growth chance: {growth_chance}')
+    print(f'Burn rate: {burn_rate}')
     global sim_params
-    sim_params = {'density': float(density), 'probability': float(probability), 'wind': tuple(map(float, wind))}
+    sim_params = {
+        'density': float(density),
+        'probability': float(probability),
+        'wind': tuple(map(float, wind)),
+        'growth': float(growth_chance),
+        'burn': float(burn_rate)
+        }
 
     global sim_flag
     sim_flag = True
@@ -90,10 +104,6 @@ def restet_pressed():
     sim_button.config(state=tk.NORMAL)
     run_button.config(state=tk.DISABLED)
 
-# from funs import (confirm_grid_size, validate_input1, confirm_sim_params, validate_input2, check_buttons, run_pressed, restet_pressed)
-
-
-
 
 grid_flag = False
 sim_flag = False
@@ -116,11 +126,11 @@ frame_up_C.pack(side='left')
 frame_up_R.pack(side='left')
 
 # XY input
-vcmd = root.register(validate_input1)
+vcmdn = root.register(validate_input1)
 
 label1 = tk.Label(frame_up_L, text="L:")
 label1.pack()
-entry1 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
+entry1 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'))
 entry1.insert(0, '45')
 entry1.pack()
 
@@ -160,6 +170,18 @@ entry5y = tk.Entry(frame_up_C_wind, validate="key", validatecommand=(vcmd, '%d',
 entry5y.insert(0, '0')
 entry5y.pack(side='left')
 
+label6 = tk.Label(frame_up_L, text="Growth chance:")
+label6.pack()
+entry6 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
+entry6.insert(0, '0.1')
+entry6.pack()
+
+label7 = tk.Label(frame_up_L, text="Burn Rate:")
+label7.pack()
+entry7 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'))
+entry7.insert(0, '4')
+entry7.pack()
+
 sim_button = tk.Button(frame_up_R, text="Confirm Sim Params", command=confirm_sim_params)
 sim_button.pack()
 
@@ -168,7 +190,7 @@ frame_plot = tk.Frame(root)
 frame_plot.pack(pady=10)
 
 
-colors = ['green', '#654321', '#FF4500']
+colors = ['#654321', 'green', '#FF4500', 'black']
 # colors = ['gray', 'blue', 'red']
 cmap = ListedColormap(colors)
 
@@ -201,7 +223,8 @@ tp = time.time()
 while True:
     root.update()
     # print(time.time() - tp)
-    if run_flag and (time.time() - tp) > 1:
-        grid = sim.calculate_fire_spread_probability(grid, 0.95)
+    if run_flag and (time.time() - tp) > 0.4:
+        grid = sim.calculate_fire_spread_probability(grid, 0.95, sim_params['burn'])
+        print(grid)
         sim.update_plot(grid, canvas)
         tp = time.time()
