@@ -27,6 +27,8 @@ def confirm_grid_size():
     gridx = entry1.get()
     # gridy = entry2.get()
     print(f"LxL: {gridx}x{gridx}")
+    print(f"Starting fires: {starting_no}")
+    print(f'Burn rate: {burn_rate}')
     # print(f"Y: {gridy}")
     global grid_size
     grid_size = (int(gridx), int(gridx))
@@ -57,7 +59,6 @@ def confirm_sim_params():
     print(f"Probability: {probability}")
     print(f'Wind: ({wind[0]}, {wind[1]})')
     print(f'Growth chance: {growth_chance}')
-    print(f'Burn rate: {burn_rate}')
     global sim_params
     sim_params = {
         'density': float(density),
@@ -70,6 +71,13 @@ def confirm_sim_params():
     global sim_flag
     sim_flag = True
     sim_button.config(state=tk.DISABLED)
+
+    entry3.config(state=tk.DISABLED)
+    entry4.config(state=tk.DISABLED)
+    entry5x.config(state=tk.DISABLED)
+    entry5y.config(state=tk.DISABLED)
+    entry6.config(state=tk.DISABLED)
+
     check_buttons()
 
 
@@ -91,10 +99,10 @@ def check_buttons():
 
 def run_pressed():
     run_button.config(state=tk.DISABLED)
-    sim_params numerical
+    sp = sim_params | numerical
     print('sim run')
     global grid
-    grid = sim.start_simulation(grid_size, sim_params)
+    grid = sim.start_simulation(grid_size, sp)
     global run_flag
     run_flag = True
 
