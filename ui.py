@@ -12,6 +12,18 @@ import sim
 run_flag  = False
 
 def confirm_grid_size():
+    entry1.config(state=tk.DISABLED)
+    entry7.config(state=tk.DISABLED)
+    entry8.config(state=tk.DISABLED)
+
+    burn_rate = entry7.get()
+    starting_no = entry8.get()
+    global numerical
+    numerical = {
+        'burn': float(burn_rate),
+        'starting': float(starting_no)
+        }
+
     gridx = entry1.get()
     # gridy = entry2.get()
     print(f"LxL: {gridx}x{gridx}")
@@ -79,6 +91,7 @@ def check_buttons():
 
 def run_pressed():
     run_button.config(state=tk.DISABLED)
+    sim_params numerical
     print('sim run')
     global grid
     grid = sim.start_simulation(grid_size, sim_params)
@@ -103,6 +116,15 @@ def restet_pressed():
     grid_button.config(state=tk.NORMAL)
     sim_button.config(state=tk.NORMAL)
     run_button.config(state=tk.DISABLED)
+
+    entry1.config(state=tk.NORMAL)
+    entry3.config(state=tk.NORMAL)
+    entry4.config(state=tk.NORMAL)
+    entry5x.config(state=tk.NORMAL)
+    entry5y.config(state=tk.NORMAL)
+    entry6.config(state=tk.NORMAL)
+    entry7.config(state=tk.NORMAL)
+    entry8.config(state=tk.NORMAL)
 
 
 grid_flag = False
@@ -134,14 +156,20 @@ entry1 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'
 entry1.insert(0, '45')
 entry1.pack()
 
-# label2 = tk.Label(frame_up_L, text="Y:")
-# label2.pack()
-# entry2 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
-# entry2.insert(0, '45')
-# entry2.pack()
-
-grid_button = tk.Button(frame_up_R, text="Confirm Grid Size", command=confirm_grid_size)
+grid_button = tk.Button(frame_up_R, text="Confirm Numerical", command=confirm_grid_size)
 grid_button.pack()
+
+label7 = tk.Label(frame_up_L, text="Burn Rate:")
+label7.pack()
+entry7 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'))
+entry7.insert(0, '4')
+entry7.pack()
+
+label8 = tk.Label(frame_up_L, text="Starting Fires:")
+label8.pack()
+entry8 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'))
+entry8.insert(0, '1')
+entry8.pack()
 
 # forest density
  
@@ -153,11 +181,17 @@ entry3 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P')
 entry3.insert(0, '0.4')
 entry3.pack()
 
-label4 = tk.Label(frame_up_L, text="Probability:")
+label4 = tk.Label(frame_up_L, text="Spread Probability:")
 label4.pack()
 entry4 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
 entry4.insert(0, '0.1')
 entry4.pack()
+
+label6 = tk.Label(frame_up_L, text="Growth chance:")
+label6.pack()
+entry6 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
+entry6.insert(0, '0.1')
+entry6.pack()
 
 label5 = tk.Label(frame_up_L, text="Wind (x,y)")
 label5.pack()
@@ -170,17 +204,8 @@ entry5y = tk.Entry(frame_up_C_wind, validate="key", validatecommand=(vcmd, '%d',
 entry5y.insert(0, '0')
 entry5y.pack(side='left')
 
-label6 = tk.Label(frame_up_L, text="Growth chance:")
-label6.pack()
-entry6 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmd, '%d', '%P'))
-entry6.insert(0, '0.1')
-entry6.pack()
-
-label7 = tk.Label(frame_up_L, text="Burn Rate:")
-label7.pack()
-entry7 = tk.Entry(frame_up_C, validate="key", validatecommand=(vcmdn, '%d', '%P'))
-entry7.insert(0, '4')
-entry7.pack()
+spacer = tk.Label(frame_up_R, text="\n\n")
+spacer.pack()
 
 sim_button = tk.Button(frame_up_R, text="Confirm Sim Params", command=confirm_sim_params)
 sim_button.pack()
@@ -190,7 +215,7 @@ frame_plot = tk.Frame(root)
 frame_plot.pack(pady=10)
 
 
-colors = ['#654321', 'green', '#FF4500', 'black']
+colors = ['green', '#654321', '#FF4500', 'black']
 # colors = ['gray', 'blue', 'red']
 cmap = ListedColormap(colors)
 
