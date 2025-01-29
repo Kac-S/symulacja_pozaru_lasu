@@ -133,6 +133,17 @@ def set_plot(getplot):
     plt.axis('off')
     # return fig
 
+def reset():
+    global grass_pos
+    global fire_tree_pos
+    global tree_pos
+    global to_burn
+    
+    tree_pos = {}
+    grass_pos = {}
+    fire_tree_pos = {}
+    to_burn = {}
+
 # print(trees)
 # plot_grid(trees)
 # start_simulation(trees)

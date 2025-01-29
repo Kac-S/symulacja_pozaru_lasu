@@ -5,6 +5,8 @@ from matplotlib.figure import Figure # type: ignore
 import numpy as np
 from matplotlib.colors import ListedColormap
 
+import sys
+
 import time
 
 import sim
@@ -52,7 +54,7 @@ def validate_input1(action, value_if_allowed):
 def confirm_sim_params():
     density = entry3.get()
     probability = entry4.get()
-    wind = (entry5x.get(), entry5y.get())
+    wind = (-1*float(entry5x.get()), entry5y.get())
     growth_chance = entry6.get()
     print(f"Density: {density}")
     print(f"Probability: {probability}")
@@ -141,7 +143,8 @@ def restet_pressed():
     entry7.config(state=tk.NORMAL)
     entry8.config(state=tk.NORMAL)
 
-
+    sim.reset()
+    reset_flag = True
 grid_flag = False
 sim_flag = False
 grid_size = (0, 0)
@@ -263,12 +266,19 @@ reset_button.pack(side='left')
 run_button = tk.Button(frame_bottom, text="Start", command=run_pressed, state=tk.DISABLED)
 run_button.pack(side='left')
 
+
+reset_flag = False
 tp = time.time()
 while True:
+
     root.update()
     # print(time.time() - tp)
+    if reset_flag:
+        grid = []
+        reset_flag = False
     if run_flag and (time.time() - tp) > 0.4:
         grid = sim.calculate_fire_spread_probability(grid, 1-sim_params['probability'], sim_params['burn'], sim_params['growth'], sim_params['wind'])
         print(grid)
         sim.update_plot(grid, canvas)
         tp = time.time()
+        # tp += 100000
